@@ -1,4 +1,12 @@
 {
+    "name": "cours-firestore",
+    "description": "Sample repository to present Firestore from Firebase to students.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lelexxx/cours-firestore.git"
+    },
+    "author": "Alexandre Ruiz <rruiz.alex@gmail.com>",
+    "keywords": ["cours", "teach", "firebase", "firestore"],
     "dependencies": {
         "firebase": "^9.9.0"
     },
