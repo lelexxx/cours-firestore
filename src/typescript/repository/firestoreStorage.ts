@@ -1,9 +1,9 @@
 import Constants from '../constants';
 import Todo from '../models/todo';
-import GenericStorage from './genericStorage';
+import GenericStorage from '../interface/genericStorage';
 
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { collection, getDocs, getFirestore, doc, getDoc, setDoc, DocumentSnapshot, SnapshotOptions, FirestoreDataConverter, Firestore } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, doc, getDoc, setDoc, deleteDoc, DocumentSnapshot, SnapshotOptions, FirestoreDataConverter, Firestore } from 'firebase/firestore';
 
 export default class FireStoreStorage implements GenericStorage<Todo>{
     private firebaseApp: FirebaseApp;
@@ -35,19 +35,23 @@ export default class FireStoreStorage implements GenericStorage<Todo>{
         return null;
     }
 
-    async addOrUpdate(item: Todo): Promise<Todo> {
-        return await this.add(item); //Firestore gère automatiquement le fait d'ajouter ou mettre à jour une ressource (en se basant sur l'ID). On peut donc toujours appeler la même méthode
+    async add(item: Todo): Promise<Todo>{
+        const documentReference = doc(this.db, Constants.FIREBASE_TODOS_PATH, item.id.toString()).withConverter(this.todoConverter());
+        setDoc(documentReference, item);
+
+        return item;
     }
 
     async update(item: Todo): Promise<Todo>{
         return await this.add(item); //Firestore gère automatiquement le fait d'ajouter ou mettre à jour une ressource (en se basant sur l'ID). On peut donc toujours appeler la même méthode
     }
 
-    async add(item: Todo): Promise<Todo>{
-        const documentReference = doc(this.db, Constants.FIREBASE_TODOS_PATH, item.id.toString()).withConverter(this.todoConverter());
-        setDoc(documentReference, item);
-
-        return item;
+    async clear(id: number | null = null): Promise<void>{
+        if(id === null) {
+            await deleteDoc(doc(this.db, Constants.FIREBASE_TODOS_PATH));
+        } else {
+            await deleteDoc(doc(this.db, Constants.FIREBASE_TODOS_PATH, id.toString()));
+        }
     }
 
     /**

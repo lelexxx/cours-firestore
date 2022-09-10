@@ -4,9 +4,9 @@ export default interface GenericStorage<Type> {
 
     get(id: number): Promise<Type | null>;
 
-    addOrUpdate(item: Type): Promise<Type>;
-
     update(item: Type): Promise<Type>;
 
     add(item: Type): Promise<Type>;
+
+    clear(id: number | null): Promise<void>;
 }
